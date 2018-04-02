@@ -13,9 +13,14 @@ import "time"
 
 // LocationUpdate represents a location update from a mover.
 type LocationUpdate struct {
-	Move      string    `json:"move"`
+	Move      string    `json:"move,omitempty"`
 	Mover     string    `json:"mover"`
 	Latitude  float32   `json:"latitude"`
 	Longitude float32   `json:"longitude"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+// HasMoveID checks if a location update is from an active move.
+func (locationUpdate LocationUpdate) HasMoveID() bool {
+	return locationUpdate.Move != ""
 }

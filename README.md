@@ -1,6 +1,7 @@
 # Geomatch
 
 ### About
+Geomatch is a Go application which provides API endpoints to retrieve a list of movers that are near a customer, update an available mover's current location and store location updates for active moves.
 
 ### Getting Started
 1. Install [Go](https://www.golang.org/) for your platform.

@@ -9,7 +9,7 @@
 // Package models provides data models for the application.
 package models
 
-// NearestMovers represents a group of movers that are near a customer.
+// NearestMovers represents a list of movers that are near a customer.
 type NearestMovers struct {
 	Movers []NearestMover `json:"nearest_movers"`
 }
