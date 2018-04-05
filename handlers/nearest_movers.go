@@ -11,6 +11,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"../models"
 	"../utilities"
@@ -38,7 +39,8 @@ func GetNearestMovers(
 	var movers models.NearestMovers
 	movers.Movers = append(movers.Movers, mover)
 
-	responseWriter.Header().Set("Content-Type", "application/json")
-	responseWriter.WriteHeader(http.StatusOK)
-	utilities.Encode(responseWriter, &mover)
+	contentEncoding := request.Header.Get("Accept-Encoding")
+	shouldGzip := strings.Contains(contentEncoding, "gzip")
+
+	utilities.WriteOKResponse(responseWriter, movers, shouldGzip)
 }

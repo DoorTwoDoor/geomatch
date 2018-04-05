@@ -6,7 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Package utilities provides functions to work with JSON codec.
+// Package utilities provides functions to work with JSON codec and write
+// responses.
 package utilities
 
 import (

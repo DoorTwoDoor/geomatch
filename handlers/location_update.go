@@ -12,6 +12,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"../models"
 	"../utilities"
@@ -38,14 +39,15 @@ func PostLocationUpdate(
 	utilities.Decode(request.Body, &location)
 
 	if location.HasMoveID() {
-		// Write data to Redis.
+		// Write data to Google Cloud Datastore.
 		fmt.Println("Mover is currently on an active move.")
 	} else {
-		// Write data to Google Cloud Datastore.
+		// Write data to Redis.
 		fmt.Println("Mover is not currently on an active move.")
 	}
 
-	responseWriter.Header().Set("Content-Type", "application/json")
-	responseWriter.WriteHeader(http.StatusOK)
-	utilities.Encode(responseWriter, &location)
+	contentEncoding := request.Header.Get("Accept-Encoding")
+	shouldGzip := strings.Contains(contentEncoding, "gzip")
+
+	utilities.WriteOKResponse(responseWriter, location, shouldGzip)
 }

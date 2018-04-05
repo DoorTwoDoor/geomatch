@@ -8,17 +8,10 @@
 
 package main
 
-import (
-	"net/http"
-
-	"./handlers"
-	"github.com/julienschmidt/httprouter"
-)
+import "net/http"
 
 func main() {
-	router := httprouter.New()
-	router.GET("/nearest-movers", handlers.GetNearestMovers)
-	router.POST("/online-movers", handlers.PostLocationUpdate)
+	router := NewRouter()
 
 	if err := http.ListenAndServe(":8080", router); err != nil {
 		panic(err)
