@@ -15,7 +15,7 @@ import (
 	"net/http"
 )
 
-// NewGzipWriter ...
+// NewGzipWriter returns a new writer.
 func NewGzipWriter(responseWriter http.ResponseWriter) *gzip.Writer {
 	return gzip.NewWriter(responseWriter)
 }

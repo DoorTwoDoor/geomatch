@@ -13,13 +13,13 @@ import (
 	"net/http"
 	"strings"
 
-	"../models"
-	"../utilities"
-
+	"github.com/doortwodoor/geomatch/models"
+	"github.com/doortwodoor/geomatch/utilities"
 	"github.com/julienschmidt/httprouter"
 )
 
-// GetNearestMovers ...
+// GetNearestMovers retrieves a set of movers that can travel to the
+// specified location in the shortest amount of time.
 func GetNearestMovers(
 	responseWriter http.ResponseWriter,
 	request *http.Request,

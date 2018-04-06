@@ -10,7 +10,7 @@ package main
 
 import "github.com/julienschmidt/httprouter"
 
-// NewRouter ...
+// NewRouter returns a new initialized router.
 func NewRouter() *httprouter.Router {
 	router := httprouter.New()
 

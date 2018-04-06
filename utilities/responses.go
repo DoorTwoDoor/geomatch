@@ -13,16 +13,21 @@ package utilities
 import (
 	"net/http"
 
-	"../models"
+	"github.com/doortwodoor/geomatch/models"
 )
 
+// HTTP response header field names and values.
 const (
-	contentEncodingKey   = "Content-Encoding"
-	contentEncodingValue = "gzip"
-	contentTypeKey       = "Content-Type"
-	contentTypeValue     = "application/json; charset=utf-8"
-	varyKey              = "Vary"
-	varyValue            = "Accept-Encoding"
+	connectionKey            = "Connection"
+	connectionValue          = "keep-alive"
+	contentEncodingKey       = "Content-Encoding"
+	contentEncodingValue     = "gzip"
+	contentTypeKey           = "Content-Type"
+	contentTypeValue         = "application/json; charset=utf-8"
+	xContentTypeOptionsKey   = "X-Content-Type-Options"
+	xContentTypeOptionsValue = "nosniff"
+	varyKey                  = "Vary"
+	varyValue                = "Accept-Encoding"
 )
 
 // writeResponseHeader sends a HTTP response header with the provided status
@@ -37,7 +42,9 @@ func writeResponseHeader(
 		responseWriter.Header().Set(varyKey, varyValue)
 	}
 
+	responseWriter.Header().Set(connectionKey, connectionValue)
 	responseWriter.Header().Set(contentTypeKey, contentTypeValue)
+	responseWriter.Header().Set(xContentTypeOptionsKey, xContentTypeOptionsValue)
 	responseWriter.WriteHeader(statusCode)
 }
 

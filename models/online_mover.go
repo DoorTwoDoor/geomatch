@@ -11,8 +11,8 @@ package models
 
 import "time"
 
-// LocationUpdate represents a location update from a mover.
-type LocationUpdate struct {
+// OnlineMover represents a mover that is either available or on a move.
+type OnlineMover struct {
 	Move      string    `json:"move,omitempty"`
 	Mover     string    `json:"mover"`
 	Latitude  float32   `json:"latitude"`
@@ -20,7 +20,7 @@ type LocationUpdate struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// HasMoveID checks if a location update is from an active move.
-func (locationUpdate LocationUpdate) HasMoveID() bool {
-	return locationUpdate.Move != ""
+// IsOnAMove checks if an online mover is on a move.
+func (onlineMover OnlineMover) IsOnAMove() bool {
+	return onlineMover.Move != ""
 }

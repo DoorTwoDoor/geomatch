@@ -9,31 +9,39 @@
 package main
 
 import (
-	"./handlers"
-
+	"github.com/doortwodoor/geomatch/handlers"
 	"github.com/julienschmidt/httprouter"
 )
 
-// Route ...
+// Route represents an API endpoint that the application can handle.
 type Route struct {
 	Method  string
 	Path    string
 	Handler httprouter.Handle
 }
 
-// Routes ...
+// Routes represents a list of API endpoints that the application can handle.
 type Routes []Route
 
-// RouterRoutes ...
+// HTTP methods and API endpoint paths.
+const (
+	getMethod         = "GET"
+	postMethod        = "POST"
+	nearestMoversPath = "/nearest-movers"
+	onlineMoversPath  = "/online-movers"
+)
+
+// RouterRoutes stores the list of API endpoints that the application can
+// handle.
 var RouterRoutes = Routes{
 	Route{
-		Method:  "GET",
-		Path:    "/nearest-movers",
+		Method:  getMethod,
+		Path:    nearestMoversPath,
 		Handler: handlers.GetNearestMovers,
 	},
 	Route{
-		Method:  "POST",
-		Path:    "/online-movers",
-		Handler: handlers.PostLocationUpdate,
+		Method:  postMethod,
+		Path:    onlineMoversPath,
+		Handler: handlers.PostOnlineMover,
 	},
 }
