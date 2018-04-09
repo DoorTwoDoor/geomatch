@@ -8,12 +8,15 @@
 
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"google.golang.org/appengine"
+)
 
 func main() {
 	router := NewRouter()
+	http.Handle("/", router)
 
-	if err := http.ListenAndServe(":4040", router); err != nil {
-		panic(err)
-	}
+	appengine.Main()
 }

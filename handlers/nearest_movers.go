@@ -25,12 +25,6 @@ func GetNearestMovers(
 	request *http.Request,
 	_ httprouter.Params,
 ) {
-	// HTTP response header field names and values.
-	const (
-		acceptEncodingKey   = "Accept-Encoding"
-		acceptEncodingValue = "gzip"
-	)
-
 	// Query Redis for movers within a certain radius of the location.
 	// Use Google Time Distance Matrix API to calculate the estimated time to
 	// arrival of each mover.
@@ -45,6 +39,11 @@ func GetNearestMovers(
 	var movers models.NearestMovers
 	movers.Movers = append(movers.Movers, mover)
 
+	// HTTP response header field names and values.
+	const (
+		acceptEncodingKey   = "Accept-Encoding"
+		acceptEncodingValue = "gzip"
+	)
 	contentEncoding := request.Header.Get(acceptEncodingKey)
 	shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
 

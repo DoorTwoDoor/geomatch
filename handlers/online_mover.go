@@ -26,12 +26,6 @@ func PostOnlineMover(
 	request *http.Request,
 	_ httprouter.Params,
 ) {
-	// HTTP response header field names and values.
-	const (
-		acceptEncodingKey   = "Accept-Encoding"
-		acceptEncodingValue = "gzip"
-	)
-
 	onlineMover := models.OnlineMover{}
 	utilities.Decode(request.Body, &onlineMover)
 
@@ -39,12 +33,18 @@ func PostOnlineMover(
 		// Write data to Google Cloud Datastore.
 		fmt.Println("Mover is currently on an active move.")
 		context := appengine.NewContext(request)
-		utilities.PutToDatastore(context, "OnlineMover", &onlineMover)
+		kind := "OnlineMover"
+		utilities.PutToDatastore(context, kind, &onlineMover)
 	} else { // Is the online mover available?
 		// Write data to Redis.
 		fmt.Println("Mover is not currently on an active move.")
 	}
 
+	// HTTP response header field names and values.
+	const (
+		acceptEncodingKey   = "Accept-Encoding"
+		acceptEncodingValue = "gzip"
+	)
 	contentEncoding := request.Header.Get(acceptEncodingKey)
 	shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
 

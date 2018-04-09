@@ -6,19 +6,14 @@
 # LICENSE file in the root directory of this source tree.
 #
 
-# application is mandatory
-application: doortwodoor-7e677
-
-# version is mandatory
-version: 1-0
-
-# runtime is mandatory
-runtime: go
-
-# api_version is mandatory
+# The version of the API in the given runtime environment that is used by
+# your app.
 api_version: go1
 
-# handlers is mandatory
-handlers:
+# A list of URL patterns and descriptions of how they should be handled.
+handlers: 
 - url: /.*
   script: _go_app
+
+# The name of the App Engine runtime environment used by this application.
+runtime: go
