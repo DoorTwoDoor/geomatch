@@ -17,6 +17,7 @@ import (
 	"github.com/doortwodoor/geomatch/models"
 	"github.com/doortwodoor/geomatch/utilities"
 	"github.com/julienschmidt/httprouter"
+	"google.golang.org/appengine"
 )
 
 // PostOnlineMover creates or updates the location information for a mover.
@@ -25,28 +26,27 @@ func PostOnlineMover(
 	request *http.Request,
 	_ httprouter.Params,
 ) {
-	// timestamp, _ := time.Parse(time.RFC3339, "2018-03-06T04:31:45Z")
-	// onlineMover := models.OnlineMover{
-	// 	Move:      "0adiC7Dr5WBppb01Mjub",
-	// 	Mover:     "5uls4pSbGeNvQFUYW8X74WraYcx2",
-	// 	Latitude:  40.752556,
-	// 	Longitude: -73.977658,
-	// 	CreatedAt: timestamp,
-	// }
+	// HTTP response header field names and values.
+	const (
+		acceptEncodingKey   = "Accept-Encoding"
+		acceptEncodingValue = "gzip"
+	)
 
 	onlineMover := models.OnlineMover{}
 	utilities.Decode(request.Body, &onlineMover)
 
-	if onlineMover.IsOnAMove() {
+	if onlineMover.IsOnAMove() { // Is the online mover on a move?
 		// Write data to Google Cloud Datastore.
 		fmt.Println("Mover is currently on an active move.")
-	} else {
+		context := appengine.NewContext(request)
+		utilities.PutToDatastore(context, "OnlineMover", &onlineMover)
+	} else { // Is the online mover available?
 		// Write data to Redis.
 		fmt.Println("Mover is not currently on an active move.")
 	}
 
-	contentEncoding := request.Header.Get("Accept-Encoding")
-	shouldGzip := strings.Contains(contentEncoding, "gzip")
+	contentEncoding := request.Header.Get(acceptEncodingKey)
+	shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
 
 	utilities.WriteOKResponse(responseWriter, onlineMover, shouldGzip)
 }

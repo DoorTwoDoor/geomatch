@@ -13,6 +13,6 @@ package models
 type NearestMover struct {
 	Mover                  string  `json:"mover"`
 	EstimatedTimeToArrival int     `json:"estimated_time_to_arrival"`
-	Latitude               float32 `json:"latitude"`
-	Longitude              float32 `json:"longitude"`
+	Latitude               float64 `json:"latitude"`
+	Longitude              float64 `json:"longitude"`
 }

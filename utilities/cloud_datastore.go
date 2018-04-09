@@ -11,11 +11,19 @@
 package utilities
 
 import (
-	"compress/gzip"
-	"net/http"
+	"context"
+
+	"google.golang.org/appengine/datastore"
 )
 
-// NewGzipWriter returns a new writer.
-func NewGzipWriter(responseWriter http.ResponseWriter) *gzip.Writer {
-	return gzip.NewWriter(responseWriter)
+// PutToDatastore saves an entity into the datastore with an automatically
+// generated key.
+func PutToDatastore(
+	context context.Context,
+	kind string,
+	value interface{},
+) (*datastore.Key, error) {
+	key := datastore.NewIncompleteKey(context, kind, nil)
+
+	return datastore.Put(context, key, value)
 }

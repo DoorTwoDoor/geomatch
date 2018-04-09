@@ -6,28 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Package utilities provides functions to work with JSON codec and write
-// responses.
+// Package utilities provides functions to work with JSON codec, write
+// responses and perform Cloud Datastore operations.
 package utilities
 
 import (
 	"net/http"
 
 	"github.com/doortwodoor/geomatch/models"
-)
-
-// HTTP response header field names and values.
-const (
-	connectionKey            = "Connection"
-	connectionValue          = "keep-alive"
-	contentEncodingKey       = "Content-Encoding"
-	contentEncodingValue     = "gzip"
-	contentTypeKey           = "Content-Type"
-	contentTypeValue         = "application/json; charset=utf-8"
-	xContentTypeOptionsKey   = "X-Content-Type-Options"
-	xContentTypeOptionsValue = "nosniff"
-	varyKey                  = "Vary"
-	varyValue                = "Accept-Encoding"
 )
 
 // writeResponseHeader sends a HTTP response header with the provided status
@@ -37,6 +23,20 @@ func writeResponseHeader(
 	shouldGzip bool,
 	statusCode int,
 ) {
+	// HTTP response header field names and values.
+	const (
+		connectionKey            = "Connection"
+		connectionValue          = "keep-alive"
+		contentEncodingKey       = "Content-Encoding"
+		contentEncodingValue     = "gzip"
+		contentTypeKey           = "Content-Type"
+		contentTypeValue         = "application/json; charset=utf-8"
+		xContentTypeOptionsKey   = "X-Content-Type-Options"
+		xContentTypeOptionsValue = "nosniff"
+		varyKey                  = "Vary"
+		varyValue                = "Accept-Encoding"
+	)
+
 	if shouldGzip {
 		responseWriter.Header().Set(contentEncodingKey, contentEncodingValue)
 		responseWriter.Header().Set(varyKey, varyValue)

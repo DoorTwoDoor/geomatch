@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Package utilities provides functions to work with JSON codec and write
-// responses.
+// Package utilities provides functions to work with JSON codec, write
+// responses and perform Cloud Datastore operations.
 package utilities
 
 import (

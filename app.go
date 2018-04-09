@@ -10,7 +10,7 @@ package main
 
 import "net/http"
 
-func init() {
+func main() {
 	router := NewRouter()
 
 	if err := http.ListenAndServe(":4040", router); err != nil {
