@@ -7,7 +7,7 @@
  */
 
 // Package utilities provides functions to work with JSON codec, write
-// responses and perform Cloud Datastore operations.
+// responses, perform Cloud Datastore operations and perform Redis operations.
 package utilities
 
 import (

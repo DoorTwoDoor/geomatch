@@ -7,7 +7,7 @@
  */
 
 // Package utilities provides functions to work with JSON codec, write
-// responses and perform Cloud Datastore operations.
+// responses, perform Cloud Datastore operations and perform Redis operations.
 package utilities
 
 import (
@@ -25,7 +25,7 @@ func TestPutToDatastore(t *testing.T) {
 	}
 	defer done()
 
-	kind := "OnlineMover"
+	const kind = "OnlineMover"
 	onlineMover := models.OnlineMover{
 		Move:      "0adiC7Dr5WBppb01Mjub",
 		Mover:     "5uls4pSbGeNvQFUYW8X74WraYcx2",

@@ -10,14 +10,18 @@ package main
 
 import (
 	"github.com/doortwodoor/geomatch/handlers"
+	"github.com/doortwodoor/geomatch/utilities"
 	"github.com/julienschmidt/httprouter"
 )
+
+// Handler represents handler functions for the API endpoints.
+type Handler func(redisClient utilities.RedisClient) httprouter.Handle
 
 // Route represents an API endpoint that the application can handle.
 type Route struct {
 	Method  string
 	Path    string
-	Handler httprouter.Handle
+	Handler Handler
 }
 
 // Routes represents a list of API endpoints that the application can handle.

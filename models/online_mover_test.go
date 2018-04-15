@@ -25,8 +25,8 @@ func TestIsOnAMove(t *testing.T) {
 		onlineMover := OnlineMover{
 			Move:      "0adiC7Dr5WBppb01Mjub",
 			Mover:     "5uls4pSbGeNvQFUYW8X74WraYcx2",
-			Latitude:  40.752556,
-			Longitude: -73.977658,
+			Latitude:  43.481082,
+			Longitude: -80.530143,
 			CreatedAt: createdAt,
 		}
 

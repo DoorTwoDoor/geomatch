@@ -11,19 +11,15 @@
 package utilities
 
 import (
-	"context"
+	"net/http/httptest"
+	"testing"
 
-	"google.golang.org/appengine/datastore"
+	"github.com/stretchr/testify/assert"
 )
 
-// PutToDatastore saves an entity into the datastore with an automatically
-// generated key.
-func PutToDatastore(
-	context context.Context,
-	kind string,
-	value interface{},
-) (*datastore.Key, error) {
-	key := datastore.NewIncompleteKey(context, kind, nil)
+func TestNewGzipWriter(t *testing.T) {
+	responseWriter := httptest.NewRecorder()
+	gzipWriter := NewGzipWriter(responseWriter)
 
-	return datastore.Put(context, key, value)
+	assert.NotNil(t, gzipWriter)
 }

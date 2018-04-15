@@ -10,20 +10,9 @@
 // responses, perform Cloud Datastore operations and perform Redis operations.
 package utilities
 
-import (
-	"context"
-
-	"google.golang.org/appengine/datastore"
-)
-
-// PutToDatastore saves an entity into the datastore with an automatically
-// generated key.
-func PutToDatastore(
-	context context.Context,
-	kind string,
-	value interface{},
-) (*datastore.Key, error) {
-	key := datastore.NewIncompleteKey(context, kind, nil)
-
-	return datastore.Put(context, key, value)
+// HandleError ...
+func HandleError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

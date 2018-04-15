@@ -10,7 +10,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -21,32 +20,39 @@ import (
 )
 
 // PostOnlineMover creates or updates the location information for a mover.
-func PostOnlineMover(
-	responseWriter http.ResponseWriter,
-	request *http.Request,
-	_ httprouter.Params,
-) {
-	onlineMover := models.OnlineMover{}
-	utilities.Decode(request.Body, &onlineMover)
+func PostOnlineMover(redisClient utilities.RedisClient) httprouter.Handle {
+	return func(
+		responseWriter http.ResponseWriter,
+		request *http.Request,
+		_ httprouter.Params,
+	) {
+		onlineMover := models.OnlineMover{}
+		utilities.Decode(request.Body, &onlineMover)
+		// @TODO: Need to validate the struct here after decoding.
 
-	if onlineMover.IsOnAMove() { // Is the online mover on a move?
-		// Write data to Google Cloud Datastore.
-		fmt.Println("Mover is currently on an active move.")
-		context := appengine.NewContext(request)
-		kind := "OnlineMover"
-		utilities.PutToDatastore(context, kind, &onlineMover)
-	} else { // Is the online mover available?
-		// Write data to Redis.
-		fmt.Println("Mover is not currently on an active move.")
+		if onlineMover.IsOnAMove() { // Is the online mover on a move?
+			// @TODO: Switch from datastore to Firestore.
+			context := appengine.NewContext(request)
+			kind := "OnlineMover"
+			utilities.PutToDatastore(context, kind, &onlineMover)
+		} else { // Is the online move available?
+			key := "OnlineMovers"
+			redisClient.GeoAdd(
+				key,
+				onlineMover.Mover,
+				onlineMover.Latitude,
+				onlineMover.Longitude,
+			)
+		}
+
+		// HTTP response header field names and values.
+		const (
+			acceptEncodingKey   = "Accept-Encoding"
+			acceptEncodingValue = "gzip"
+		)
+		contentEncoding := request.Header.Get(acceptEncodingKey)
+		shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
+
+		utilities.WriteOKResponse(responseWriter, onlineMover, shouldGzip)
 	}
-
-	// HTTP response header field names and values.
-	const (
-		acceptEncodingKey   = "Accept-Encoding"
-		acceptEncodingValue = "gzip"
-	)
-	contentEncoding := request.Header.Get(acceptEncodingKey)
-	shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
-
-	utilities.WriteOKResponse(responseWriter, onlineMover, shouldGzip)
 }

@@ -7,7 +7,7 @@
  */
 
 // Package utilities provides functions to work with JSON codec, write
-// responses and perform Cloud Datastore operations.
+// responses, perform Cloud Datastore operations and perform Redis operations.
 package utilities
 
 import (
@@ -36,16 +36,16 @@ func TestDecode(t *testing.T) {
 	expectedOnlineMoverStruct := models.OnlineMover{
 		Move:      "0adiC7Dr5WBppb01Mjub",
 		Mover:     "5uls4pSbGeNvQFUYW8X74WraYcx2",
-		Latitude:  40.752556,
-		Longitude: -73.977658,
+		Latitude:  43.481082,
+		Longitude: -80.530143,
 		CreatedAt: time.Date(2018, time.April, 8, 10, 0, 0, 0, time.UTC),
 	}
 
-	onlineMoverJSON := `{
+	const onlineMoverJSON = `{
 		"move": "0adiC7Dr5WBppb01Mjub",
 		"mover": "5uls4pSbGeNvQFUYW8X74WraYcx2",
-		"latitude": 40.752556,
-		"longitude": -73.977658,
+		"latitude": 43.481082,
+		"longitude": -80.530143,
 		"created_at": "2018-04-08T10:00:00Z"
 	}`
 	reader := strings.NewReader(onlineMoverJSON)
@@ -59,8 +59,8 @@ func TestEncode(t *testing.T) {
 	expectedOnlineMoverJSON := `{
 		"move": "0adiC7Dr5WBppb01Mjub",
 		"mover": "5uls4pSbGeNvQFUYW8X74WraYcx2",
-		"latitude": 40.752556,
-		"longitude": -73.977658,
+		"latitude": 43.481082,
+		"longitude": -80.530143,
 		"created_at": "2018-04-08T10:00:00Z"
 	}`
 	expectedOnlineMoverJSON = compactJSON(expectedOnlineMoverJSON)
@@ -68,8 +68,8 @@ func TestEncode(t *testing.T) {
 	onlineMoverStruct := models.OnlineMover{
 		Move:      "0adiC7Dr5WBppb01Mjub",
 		Mover:     "5uls4pSbGeNvQFUYW8X74WraYcx2",
-		Latitude:  40.752556,
-		Longitude: -73.977658,
+		Latitude:  43.481082,
+		Longitude: -80.530143,
 		CreatedAt: time.Date(2018, time.April, 8, 10, 0, 0, 0, time.UTC),
 	}
 	buffer := bytes.Buffer{}

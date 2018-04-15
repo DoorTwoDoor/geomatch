@@ -11,11 +11,19 @@ package main
 import (
 	"net/http"
 
+	"github.com/doortwodoor/geomatch/utilities"
 	"google.golang.org/appengine"
 )
 
 func main() {
-	router := NewRouter()
+	// address := "35.184.145.206:6379"
+	// password := "nY7FX1pqggQL"
+	// if appengine.IsDevAppServer() { // Is running in the development app server?
+	address := "localhost:6379"
+	password := ""
+	//}
+	redisClient := utilities.NewRedisClient(address, password)
+	router := NewRouter(redisClient)
 	http.Handle("/", router)
 
 	appengine.Main()

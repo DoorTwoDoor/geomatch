@@ -8,15 +8,21 @@
 
 package main
 
-import "github.com/julienschmidt/httprouter"
+import (
+	"github.com/doortwodoor/geomatch/handlers"
+	"github.com/doortwodoor/geomatch/utilities"
+	"github.com/julienschmidt/httprouter"
+)
 
 // NewRouter returns a new initialized router.
-func NewRouter() *httprouter.Router {
+func NewRouter(redisClient utilities.RedisClient) *httprouter.Router {
 	router := httprouter.New()
 
 	for _, route := range RouterRoutes {
-		router.Handle(route.Method, route.Path, route.Handler)
+		router.Handle(route.Method, route.Path, route.Handler(redisClient))
 	}
+
+	router.PanicHandler = handlers.HandlePanic
 
 	return router
 }
