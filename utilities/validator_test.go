@@ -6,47 +6,54 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Package models provides data models for the application.
-package models
+// Package utilities provides functions to work with JSON codec, write
+// responses, perform Cloud Datastore operations and perform Redis operations.
+package utilities
 
 import (
 	"testing"
 	"time"
 
+	"github.com/doortwodoor/geomatch/models"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIsOnAMove(t *testing.T) {
+func TestNewValidator(t *testing.T) {
+	validator := NewValidator()
+
+	assert.NotNil(t, validator)
+}
+
+func TestValidateStruct(t *testing.T) {
 	createdAt := time.Date(2018, time.April, 8, 10, 0, 0, 0, time.UTC)
+	validator := NewValidator()
 
 	t.Run("active_mover", func(t *testing.T) {
 		t.Parallel()
-		expectedResult := true
 
-		onlineMover := OnlineMover{
+		onlineMover := models.OnlineMover{
 			Move:      "0adiC7Dr5WBppb01Mjub",
 			Mover:     "5uls4pSbGeNvQFUYW8X74WraYcx2",
 			Latitude:  43.481082,
 			Longitude: -80.530143,
 			CreatedAt: createdAt,
 		}
-		actualResult := onlineMover.IsOnAMove()
+		result := validator.ValidateStruct(onlineMover)
 
-		assert.Equal(t, expectedResult, actualResult)
+		assert.Nil(t, result)
 	})
 
 	t.Run("available_mover", func(t *testing.T) {
 		t.Parallel()
-		expectedResult := false
 
-		onlineMover := OnlineMover{
+		onlineMover := models.OnlineMover{
 			Mover:     "KjfP77iiDSOKOoPEGnV0Jvmutcb2",
-			Latitude:  30.452416,
-			Longitude: -63.674854,
+			Latitude:  43.645621,
+			Longitude: -79.391686,
 			CreatedAt: createdAt,
 		}
-		actualResult := onlineMover.IsOnAMove()
+		result := validator.ValidateStruct(onlineMover)
 
-		assert.Equal(t, expectedResult, actualResult)
+		assert.Nil(t, result)
 	})
 }

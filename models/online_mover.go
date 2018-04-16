@@ -9,15 +9,17 @@
 // Package models provides data models for the application.
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // OnlineMover represents a mover that is either available or on a move.
 type OnlineMover struct {
 	Move      string    `json:"move,omitempty"`
-	Mover     string    `json:"mover"`
-	Latitude  float64   `json:"latitude"`
-	Longitude float64   `json:"longitude"`
-	CreatedAt time.Time `json:"created_at"`
+	Mover     string    `json:"mover" validate:"required"`
+	Latitude  float64   `json:"latitude" validate:"required,min=-90,max=90"`
+	Longitude float64   `json:"longitude" validate:"required,min=-180,max=180"`
+	CreatedAt time.Time `json:"created_at" validate:"required,lte"`
 }
 
 // IsOnAMove checks if an online mover is on a move.

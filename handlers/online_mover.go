@@ -20,15 +20,46 @@ import (
 )
 
 // PostOnlineMover creates or updates the location information for a mover.
-func PostOnlineMover(redisClient utilities.RedisClient) httprouter.Handle {
+func PostOnlineMover(
+	validator utilities.Validator,
+	redisClient utilities.RedisClient,
+) httprouter.Handle {
 	return func(
 		responseWriter http.ResponseWriter,
 		request *http.Request,
 		_ httprouter.Params,
 	) {
+		// HTTP request header field names and values.
+		const (
+			acceptEncodingKey   = "Accept-Encoding"
+			acceptEncodingValue = "gzip"
+		)
+		contentEncoding := request.Header.Get(acceptEncodingKey)
+		shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
+
+		var error error
 		onlineMover := models.OnlineMover{}
-		utilities.Decode(request.Body, &onlineMover)
-		// @TODO: Need to validate the struct here after decoding.
+		error = utilities.Decode(request.Body, &onlineMover)
+		if error != nil {
+			utilities.WriteErrorResponse(
+				responseWriter,
+				http.StatusBadRequest,
+				shouldGzip,
+			)
+
+			return
+		}
+
+		error = validator.ValidateStruct(onlineMover)
+		if error != nil {
+			utilities.WriteErrorResponse(
+				responseWriter,
+				http.StatusUnprocessableEntity,
+				shouldGzip,
+			)
+
+			return
+		}
 
 		if onlineMover.IsOnAMove() { // Is the online mover on a move?
 			// @TODO: Switch from datastore to Firestore.
@@ -44,14 +75,6 @@ func PostOnlineMover(redisClient utilities.RedisClient) httprouter.Handle {
 				onlineMover.Longitude,
 			)
 		}
-
-		// HTTP response header field names and values.
-		const (
-			acceptEncodingKey   = "Accept-Encoding"
-			acceptEncodingValue = "gzip"
-		)
-		contentEncoding := request.Header.Get(acceptEncodingKey)
-		shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
 
 		utilities.WriteOKResponse(responseWriter, onlineMover, shouldGzip)
 	}

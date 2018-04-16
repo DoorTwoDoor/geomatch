@@ -16,11 +16,11 @@ import (
 	"github.com/doortwodoor/geomatch/utilities"
 )
 
-// HandlePanic handles panics recovered from HTTP handlers.
-func HandlePanic(
+// HandleMethodNotAllowed handles requests for which a request cannot be routed
+// and HandleMethodNotAllowed is true.
+func HandleMethodNotAllowed(
 	responseWriter http.ResponseWriter,
 	request *http.Request,
-	value interface{},
 ) {
 	// HTTP request header field names and values.
 	const (
@@ -32,7 +32,7 @@ func HandlePanic(
 
 	utilities.WriteErrorResponse(
 		responseWriter,
-		http.StatusInternalServerError,
+		http.StatusMethodNotAllowed,
 		shouldGzip,
 	)
 }

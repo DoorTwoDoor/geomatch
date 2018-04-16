@@ -15,7 +15,10 @@ import (
 )
 
 // Handler represents handler functions for the API endpoints.
-type Handler func(redisClient utilities.RedisClient) httprouter.Handle
+type Handler func(
+	validator utilities.Validator,
+	redisClient utilities.RedisClient,
+) httprouter.Handle
 
 // Route represents an API endpoint that the application can handle.
 type Route struct {

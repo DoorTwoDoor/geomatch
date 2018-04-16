@@ -22,7 +22,10 @@ import (
 
 // GetNearestMovers retrieves a set of movers that can travel to the
 // specified location in the shortest amount of time.
-func GetNearestMovers(redisClient utilities.RedisClient) httprouter.Handle {
+func GetNearestMovers(
+	validator utilities.Validator,
+	redisClient utilities.RedisClient,
+) httprouter.Handle {
 	return func(
 		responseWriter http.ResponseWriter,
 		request *http.Request,
@@ -68,7 +71,7 @@ func GetNearestMovers(redisClient utilities.RedisClient) httprouter.Handle {
 			movers.Movers = append(movers.Movers, mover)
 		}
 
-		// HTTP response header field names and values.
+		// HTTP request header field names and values.
 		const (
 			acceptEncodingKey   = "Accept-Encoding"
 			acceptEncodingValue = "gzip"

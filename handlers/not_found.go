@@ -16,11 +16,10 @@ import (
 	"github.com/doortwodoor/geomatch/utilities"
 )
 
-// HandlePanic handles panics recovered from HTTP handlers.
-func HandlePanic(
+// HandleNotFound handles requests for which no matching route is found.
+func HandleNotFound(
 	responseWriter http.ResponseWriter,
 	request *http.Request,
-	value interface{},
 ) {
 	// HTTP request header field names and values.
 	const (
@@ -32,7 +31,7 @@ func HandlePanic(
 
 	utilities.WriteErrorResponse(
 		responseWriter,
-		http.StatusInternalServerError,
+		http.StatusNotFound,
 		shouldGzip,
 	)
 }

@@ -26,9 +26,8 @@ func NewRedisClient(address string, password string) RedisClient {
 		DB:       0,
 	}
 	client := redis.NewClient(&options)
-	redisClient := RedisClient{client: client}
 
-	return redisClient
+	return RedisClient{client: client}
 }
 
 // GeoAdd adds the specified geospatial item (name, latitude, longitude) to the

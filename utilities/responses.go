@@ -16,6 +16,31 @@ import (
 	"github.com/doortwodoor/geomatch/models"
 )
 
+// getErrorMessage retrieves the error message corresponding to the provided
+// status code.
+func getErrorMessage(statusCode int) string {
+	errorMessage := ""
+
+	switch statusCode {
+	case http.StatusBadRequest:
+		errorMessage = "The resource submitted could not be parsed."
+
+	case http.StatusNotFound:
+		errorMessage = "The requested resource could not be found."
+
+	case http.StatusMethodNotAllowed:
+		errorMessage = "The requested method and resource are not compatible."
+
+	case http.StatusUnprocessableEntity:
+		errorMessage = "The fields submitted with this resource are invalid."
+
+	case http.StatusInternalServerError:
+		errorMessage = "An unexpected internal error has occurred."
+	}
+
+	return errorMessage
+}
+
 // writeResponseHeader sends a HTTP response header with the provided status
 // code.
 func writeResponseHeader(
@@ -71,16 +96,16 @@ func WriteOKResponse(
 // status code.
 func WriteErrorResponse(
 	responseWriter http.ResponseWriter,
-	code int,
-	message string,
+	statusCode int,
 	shouldGzip bool,
 ) error {
+	message := getErrorMessage(statusCode)
 	errorResponse := models.ErrorResponse{
-		Code:    code,
+		Code:    statusCode,
 		Message: message,
 	}
 
-	writeResponseHeader(responseWriter, shouldGzip, code)
+	writeResponseHeader(responseWriter, shouldGzip, statusCode)
 
 	if shouldGzip {
 		gzipWriter := NewGzipWriter(responseWriter)

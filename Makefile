@@ -43,6 +43,10 @@ deps:
 	@echo "Downloading and installing packages and dependencies..."
 	$(GOGET) -u -v -d ./...
 
+logs:
+	@echo "Reading log entries from App Engine..."
+	$(GCLOUDAPP) logs read
+
 run: build
 	@echo "Compiling and running Go program..."
 	chmod u+x $(EXECNAME)
