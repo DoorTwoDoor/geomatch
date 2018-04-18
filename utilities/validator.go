@@ -6,8 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Package utilities provides functions to work with JSON codec, write
-// responses, perform Cloud Datastore operations and perform Redis operations.
+// Package utilities provides functions to work with JSON codec, parse requests
+// write responses, validate, perform Cloud Datastore operations and perform
+// Redis operations.
 package utilities
 
 import "gopkg.in/go-playground/validator.v9"
@@ -25,8 +26,34 @@ func NewValidator() Validator {
 	return Validator{validate: validate}
 }
 
+// ValidateQueryParameters validates query parameters using tag style
+// validation rules.
+func (validator Validator) ValidateQueryParameters(
+	queryParameters map[string]interface{},
+	rules map[string]string,
+) error {
+	var err error
+
+	for key, value := range rules {
+		queryParameter := queryParameters[key]
+
+		err = validator.ValidateVar(queryParameter, value)
+
+		if err != nil {
+			break
+		}
+	}
+
+	return err
+}
+
 // ValidateStruct validates a struct exposed fields, and automatically
-// validates
+// validates nested structs, unless otherwise specified.
 func (validator Validator) ValidateStruct(value interface{}) error {
 	return validator.validate.Struct(value)
+}
+
+// ValidateVar validates a single variable using tag style validation.
+func (validator Validator) ValidateVar(value interface{}, tag string) error {
+	return validator.validate.Var(value, tag)
 }

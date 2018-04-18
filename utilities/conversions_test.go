@@ -12,15 +12,23 @@
 package utilities
 
 import (
-	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewGzipWriter(t *testing.T) {
-	responseWriter := httptest.NewRecorder()
-	gzipWriter := NewGzipWriter(responseWriter)
+func TestAtoi(t *testing.T) {
+	const expectedResult = 10
 
-	assert.NotNil(t, gzipWriter)
+	actualResult, _ := Atoi("10")
+
+	assert.Equal(t, expectedResult, actualResult)
+}
+
+func TestParseFloat(t *testing.T) {
+	const expectedResult = 43.474307
+
+	actualResult, _ := ParseFloat("43.474307", 64)
+
+	assert.Equal(t, expectedResult, actualResult)
 }

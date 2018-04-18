@@ -9,9 +9,7 @@
 // Package models provides data models for the application.
 package models
 
-import (
-	"time"
-)
+import "time"
 
 // OnlineMover represents a mover that is either available or on a move.
 type OnlineMover struct {

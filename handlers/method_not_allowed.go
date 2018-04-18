@@ -11,7 +11,6 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/doortwodoor/geomatch/utilities"
 )
@@ -22,13 +21,7 @@ func HandleMethodNotAllowed(
 	responseWriter http.ResponseWriter,
 	request *http.Request,
 ) {
-	// HTTP request header field names and values.
-	const (
-		acceptEncodingKey   = "Accept-Encoding"
-		acceptEncodingValue = "gzip"
-	)
-	contentEncoding := request.Header.Get(acceptEncodingKey)
-	shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
+	shouldGzip := utilities.ShouldGzipResponse(request)
 
 	utilities.WriteErrorResponse(
 		responseWriter,

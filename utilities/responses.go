@@ -6,8 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Package utilities provides functions to work with JSON codec, write
-// responses, perform Cloud Datastore operations and perform Redis operations.
+// Package utilities provides functions to work with JSON codec, parse requests
+// write responses, validate, perform Cloud Datastore operations and perform
+// Redis operations.
 package utilities
 
 import (
@@ -15,6 +16,50 @@ import (
 
 	"github.com/doortwodoor/geomatch/models"
 )
+
+// WriteOKResponse writes the response as a standard JSON response with status
+// OK.
+func WriteOKResponse(
+	responseWriter http.ResponseWriter,
+	value interface{},
+	shouldGzip bool,
+) error {
+	writeResponseHeader(responseWriter, shouldGzip, http.StatusOK)
+
+	if shouldGzip {
+		gzipWriter := NewGzipWriter(responseWriter)
+		defer gzipWriter.Close()
+
+		return Encode(gzipWriter, &value)
+	}
+
+	return Encode(responseWriter, &value)
+}
+
+// WriteErrorResponse writes the response as a standard JSON response with
+// status code.
+func WriteErrorResponse(
+	responseWriter http.ResponseWriter,
+	statusCode int,
+	shouldGzip bool,
+) error {
+	message := getErrorMessage(statusCode)
+	errorResponse := models.ErrorResponse{
+		Code:    statusCode,
+		Message: message,
+	}
+
+	writeResponseHeader(responseWriter, shouldGzip, statusCode)
+
+	if shouldGzip {
+		gzipWriter := NewGzipWriter(responseWriter)
+		defer gzipWriter.Close()
+
+		return Encode(gzipWriter, &errorResponse)
+	}
+
+	return Encode(responseWriter, &errorResponse)
+}
 
 // getErrorMessage retrieves the error message corresponding to the provided
 // status code.
@@ -71,48 +116,4 @@ func writeResponseHeader(
 	responseWriter.Header().Set(contentTypeKey, contentTypeValue)
 	responseWriter.Header().Set(xContentTypeOptionsKey, xContentTypeOptionsValue)
 	responseWriter.WriteHeader(statusCode)
-}
-
-// WriteOKResponse writes the response as a standard JSON response with status
-// OK.
-func WriteOKResponse(
-	responseWriter http.ResponseWriter,
-	value interface{},
-	shouldGzip bool,
-) error {
-	writeResponseHeader(responseWriter, shouldGzip, http.StatusOK)
-
-	if shouldGzip {
-		gzipWriter := NewGzipWriter(responseWriter)
-		defer gzipWriter.Close()
-
-		return Encode(gzipWriter, &value)
-	}
-
-	return Encode(responseWriter, &value)
-}
-
-// WriteErrorResponse writes the response as a standard JSON response with
-// status code.
-func WriteErrorResponse(
-	responseWriter http.ResponseWriter,
-	statusCode int,
-	shouldGzip bool,
-) error {
-	message := getErrorMessage(statusCode)
-	errorResponse := models.ErrorResponse{
-		Code:    statusCode,
-		Message: message,
-	}
-
-	writeResponseHeader(responseWriter, shouldGzip, statusCode)
-
-	if shouldGzip {
-		gzipWriter := NewGzipWriter(responseWriter)
-		defer gzipWriter.Close()
-
-		return Encode(gzipWriter, &errorResponse)
-	}
-
-	return Encode(responseWriter, &errorResponse)
 }

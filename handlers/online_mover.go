@@ -11,7 +11,6 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/doortwodoor/geomatch/models"
 	"github.com/doortwodoor/geomatch/utilities"
@@ -29,17 +28,10 @@ func PostOnlineMover(
 		request *http.Request,
 		_ httprouter.Params,
 	) {
-		// HTTP request header field names and values.
-		const (
-			acceptEncodingKey   = "Accept-Encoding"
-			acceptEncodingValue = "gzip"
-		)
-		contentEncoding := request.Header.Get(acceptEncodingKey)
-		shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
+		shouldGzip := utilities.ShouldGzipResponse(request)
 
-		var error error
 		onlineMover := models.OnlineMover{}
-		error = utilities.Decode(request.Body, &onlineMover)
+		error := utilities.Decode(request.Body, &onlineMover)
 		if error != nil {
 			utilities.WriteErrorResponse(
 				responseWriter,

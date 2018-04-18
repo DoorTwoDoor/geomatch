@@ -6,8 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Package utilities provides functions to work with JSON codec, write
-// responses, perform Cloud Datastore operations and perform Redis operations.
+// Package utilities provides functions to work with JSON codec, parse requests
+// write responses, validate, perform Cloud Datastore operations and perform
+// Redis operations.
 package utilities
 
 import (
@@ -19,9 +20,9 @@ import (
 )
 
 func TestPutToDatastore(t *testing.T) {
-	context, done, error := aetest.NewContext()
-	if error != nil {
-		t.Fatal(error)
+	context, done, err := aetest.NewContext()
+	if err != nil {
+		t.Fatal(err)
 	}
 	defer done()
 
@@ -33,8 +34,8 @@ func TestPutToDatastore(t *testing.T) {
 		Longitude: -73.977658,
 		CreatedAt: time.Date(2018, time.April, 8, 10, 0, 0, 0, time.UTC),
 	}
-	_, error = PutToDatastore(context, kind, &onlineMover)
-	if error != nil {
-		t.Fatal(error)
+	_, err = PutToDatastore(context, kind, &onlineMover)
+	if err != nil {
+		t.Fatal(err)
 	}
 }

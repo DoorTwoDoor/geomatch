@@ -11,8 +11,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/doortwodoor/geomatch/models"
 	"github.com/doortwodoor/geomatch/utilities"
@@ -31,21 +29,42 @@ func GetNearestMovers(
 		request *http.Request,
 		_ httprouter.Params,
 	) {
-		// Query Redis for movers within a certain radius of the location.
+		shouldGzip := utilities.ShouldGzipResponse(request)
+
+		queryParameters, err := decodeQueryParameters(request)
+		if err != nil {
+			utilities.WriteErrorResponse(
+				responseWriter,
+				http.StatusBadRequest,
+				shouldGzip,
+			)
+
+			return
+		}
+
+		err = validateQueryParameters(validator, queryParameters)
+		if err != nil {
+			utilities.WriteErrorResponse(
+				responseWriter,
+				http.StatusUnprocessableEntity,
+				shouldGzip,
+			)
+
+			return
+		}
+
 		const (
 			key             = "OnlineMovers"
 			unit            = "m"
 			withCoordinates = true
 			sort            = "ASC"
 		)
-		queryStrings := request.URL.Query()
-		latitude, _ := strconv.ParseFloat(queryStrings.Get("latitude"), 64)
-		longitude, _ := strconv.ParseFloat(queryStrings.Get("longitude"), 64)
-		radius, _ := strconv.ParseFloat(queryStrings.Get("radius"), 64)
-		count, _ := strconv.Atoi(queryStrings.Get("limit"))
+		latitude := queryParameters["latitude"].(float64)
+		longitude := queryParameters["longitude"].(float64)
+		radius := queryParameters["radius"].(float64)
+		count := queryParameters["limit"].(int)
 
-		// @TODO: Need to validate the query strings here after parsing.
-
+		// Query Redis for movers within a certain radius of the location.
 		nearestMovers, _ := redisClient.GeoRadius(
 			key,
 			latitude,
@@ -71,14 +90,36 @@ func GetNearestMovers(
 			movers.Movers = append(movers.Movers, mover)
 		}
 
-		// HTTP request header field names and values.
-		const (
-			acceptEncodingKey   = "Accept-Encoding"
-			acceptEncodingValue = "gzip"
-		)
-		contentEncoding := request.Header.Get(acceptEncodingKey)
-		shouldGzip := strings.Contains(contentEncoding, acceptEncodingValue)
-
 		utilities.WriteOKResponse(responseWriter, movers, shouldGzip)
 	}
+}
+
+// decodeQueryParameters decodes query parameters using decoding rules.
+func decodeQueryParameters(
+	request *http.Request,
+) (map[string]interface{}, error) {
+	decodingRules := map[string]string{
+		"latitude":  "stof",
+		"longitude": "stof",
+		"radius":    "stof",
+		"limit":     "stoi",
+	}
+
+	return utilities.DecodeQueryParameters(request, decodingRules)
+}
+
+// validateQueryParameters validates query parameters using tag style
+// validation rules.
+func validateQueryParameters(
+	validator utilities.Validator,
+	queryParameters map[string]interface{},
+) error {
+	validationRules := map[string]string{
+		"latitude":  "required,min=-90,max=90",
+		"longitude": "required,min=-180,max=180",
+		"radius":    "required,min=0",
+		"limit":     "required,min=1",
+	}
+
+	return validator.ValidateQueryParameters(queryParameters, validationRules)
 }

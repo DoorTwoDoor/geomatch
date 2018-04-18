@@ -11,16 +11,15 @@
 // Redis operations.
 package utilities
 
-import (
-	"net/http/httptest"
-	"testing"
+import "strconv"
 
-	"github.com/stretchr/testify/assert"
-)
+// Atoi returns the result of ParseInt(s, 10, 0) converted to type int.
+func Atoi(s string) (int, error) {
+	return strconv.Atoi(s)
+}
 
-func TestNewGzipWriter(t *testing.T) {
-	responseWriter := httptest.NewRecorder()
-	gzipWriter := NewGzipWriter(responseWriter)
-
-	assert.NotNil(t, gzipWriter)
+// ParseFloat converts the string s to a floating-point number with the
+// precision specified by bit size.
+func ParseFloat(s string, bitSize int) (float64, error) {
+	return strconv.ParseFloat(s, bitSize)
 }

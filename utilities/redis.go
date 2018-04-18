@@ -6,8 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Package utilities provides functions to work with JSON codec, write
-// responses, perform Cloud Datastore operations and perform Redis operations.
+// Package utilities provides functions to work with JSON codec, parse requests
+// write responses, validate, perform Cloud Datastore operations and perform
+// Redis operations.
 package utilities
 
 import "github.com/go-redis/redis"
