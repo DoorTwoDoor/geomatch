@@ -1,0 +1,8 @@
+Redis credentials
+{
+  "redisHost": "35.184.145.206",
+  "redisPort": "6379",
+  "redisKey": "nY7FX1pqggQL"
+}
+
+Google Maps Time Distance API Key: AIzaSyAfkT36mAivoyX3mPVH-6NW7Ri_1D8imr0

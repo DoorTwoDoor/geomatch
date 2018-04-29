@@ -18,35 +18,38 @@ import (
 
 func TestIsOnAMove(t *testing.T) {
 	createdAt := time.Date(2018, time.April, 8, 10, 0, 0, 0, time.UTC)
+	onlineMoverOne := OnlineMover{
+		Move:      "0adiC7Dr5WBppb01Mjub",
+		Mover:     "5uls4pSbGeNvQFUYW8X74WraYcx2",
+		Latitude:  43.481082,
+		Longitude: -80.530143,
+		CreatedAt: createdAt,
+	}
+	onlineMoverTwo := OnlineMover{
+		Mover:     "KjfP77iiDSOKOoPEGnV0Jvmutcb2",
+		Latitude:  30.452416,
+		Longitude: -63.674854,
+		CreatedAt: createdAt,
+	}
+	tests := []struct {
+		testName       string
+		testInput      OnlineMover
+		expectedResult bool
+	}{
+		{"active_mover", onlineMoverOne, true},
+		{"available_mover", onlineMoverTwo, false},
+	}
 
-	t.Run("active_mover", func(t *testing.T) {
-		t.Parallel()
-		expectedResult := true
+	for _, test := range tests {
+		test := test
 
-		onlineMover := OnlineMover{
-			Move:      "0adiC7Dr5WBppb01Mjub",
-			Mover:     "5uls4pSbGeNvQFUYW8X74WraYcx2",
-			Latitude:  43.481082,
-			Longitude: -80.530143,
-			CreatedAt: createdAt,
-		}
-		actualResult := onlineMover.IsOnAMove()
+		t.Run(test.testName, func(t *testing.T) {
+			t.Parallel()
 
-		assert.Equal(t, expectedResult, actualResult)
-	})
+			expectedResult := test.expectedResult
+			actualResult := test.testInput.IsOnAMove()
 
-	t.Run("available_mover", func(t *testing.T) {
-		t.Parallel()
-		expectedResult := false
-
-		onlineMover := OnlineMover{
-			Mover:     "KjfP77iiDSOKOoPEGnV0Jvmutcb2",
-			Latitude:  30.452416,
-			Longitude: -63.674854,
-			CreatedAt: createdAt,
-		}
-		actualResult := onlineMover.IsOnAMove()
-
-		assert.Equal(t, expectedResult, actualResult)
-	})
+			assert.Equal(t, expectedResult, actualResult)
+		})
+	}
 }

@@ -13,6 +13,7 @@ GOBUILD  = $(GOCMD) build
 GOCLEAN  = $(GOCMD) clean
 GOGET    = $(GOCMD) get
 GOTEST   = $(GOCMD) test
+GOVET    = $(GOCMD) vet
 EXECNAME = geomatch
 
 # Google Cloud Platform commnad-line interface macros.
@@ -59,3 +60,7 @@ serve:
 test:
 	@echo "Testing packages..."
 	$(GOTEST) -v ./...
+
+vet:
+	@echo "Examining source code..."
+	$(GOVET) -v ./...

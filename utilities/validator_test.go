@@ -25,6 +25,64 @@ func TestNewValidator(t *testing.T) {
 	assert.NotNil(t, validator)
 }
 
+func TestValidateQueryParameters(t *testing.T) {
+	queryParametersOne := map[string]interface{}{
+		"latitude":  43.474307,
+		"longitude": -80.537230,
+		"radius":    1000,
+		"limit":     10,
+	}
+	queryParametersTwo := map[string]interface{}{
+		"latitude":  43.474307,
+		"longitude": -180.537230,
+		"radius":    1000,
+		"limit":     10,
+	}
+	validationRules := map[string]string{
+		"latitude":  "required,min=-90,max=90",
+		"longitude": "required,min=-180,max=180",
+		"radius":    "required,min=0",
+		"limit":     "required,min=1",
+	}
+	tests := []struct {
+		testName       string
+		testsInputs    []interface{}
+		expectedResult string
+	}{
+		{
+			"valid_query_parameters",
+			[]interface{}{queryParametersOne, validationRules},
+			"nil",
+		},
+		{
+			"invalid_query_parameters",
+			[]interface{}{queryParametersTwo, validationRules},
+			"not_nil",
+		},
+	}
+	validator := NewValidator()
+
+	for _, test := range tests {
+		test := test
+
+		t.Run(test.testName, func(t *testing.T) {
+			t.Parallel()
+
+			queryParameters := test.testsInputs[0].(map[string]interface{})
+			rules := test.testsInputs[1].(map[string]string)
+			result := validator.ValidateQueryParameters(queryParameters, rules)
+
+			expectedResult := test.expectedResult
+
+			if expectedResult == "nil" {
+				assert.Nil(t, result)
+			} else {
+				assert.NotNil(t, result)
+			}
+		})
+	}
+}
+
 func TestValidateStruct(t *testing.T) {
 	createdAt := time.Date(2018, time.April, 8, 10, 0, 0, 0, time.UTC)
 	validator := NewValidator()
@@ -54,6 +112,54 @@ func TestValidateStruct(t *testing.T) {
 			CreatedAt: createdAt,
 		}
 		result := validator.ValidateStruct(onlineMover)
+
+		assert.Nil(t, result)
+	})
+}
+
+func TestValidateVar(t *testing.T) {
+	validator := NewValidator()
+
+	t.Run("latitude", func(t *testing.T) {
+		t.Parallel()
+		const (
+			value = 43.481082
+			tag   = "required,min=-90,max=90"
+		)
+		result := validator.ValidateVar(value, tag)
+
+		assert.Nil(t, result)
+	})
+
+	t.Run("longitude", func(t *testing.T) {
+		t.Parallel()
+		const (
+			value = -80.530143
+			tag   = "required,min=-180,max=180"
+		)
+		result := validator.ValidateVar(value, tag)
+
+		assert.Nil(t, result)
+	})
+
+	t.Run("radius", func(t *testing.T) {
+		t.Parallel()
+		const (
+			value = 1000
+			tag   = "required,min=0"
+		)
+		result := validator.ValidateVar(value, tag)
+
+		assert.Nil(t, result)
+	})
+
+	t.Run("limit", func(t *testing.T) {
+		t.Parallel()
+		const (
+			value = 10
+			tag   = "required,min=1"
+		)
+		result := validator.ValidateVar(value, tag)
 
 		assert.Nil(t, result)
 	})

@@ -33,6 +33,8 @@ func GetNearestMovers(
 
 		queryParameters, err := decodeQueryParameters(request)
 		if err != nil {
+			utilities.Print(err)
+
 			utilities.WriteErrorResponse(
 				responseWriter,
 				http.StatusBadRequest,
@@ -44,6 +46,8 @@ func GetNearestMovers(
 
 		err = validateQueryParameters(validator, queryParameters)
 		if err != nil {
+			utilities.Print(err)
+
 			utilities.WriteErrorResponse(
 				responseWriter,
 				http.StatusUnprocessableEntity,
@@ -64,8 +68,7 @@ func GetNearestMovers(
 		radius := queryParameters["radius"].(float64)
 		count := queryParameters["limit"].(int)
 
-		// Query Redis for movers within a certain radius of the location.
-		nearestMovers, _ := redisClient.GeoRadius(
+		nearestMovers, err := redisClient.GeoRadius(
 			key,
 			latitude,
 			longitude,
@@ -75,6 +78,9 @@ func GetNearestMovers(
 			count,
 			sort,
 		)
+		if err != nil {
+			utilities.Panic(err)
+		}
 
 		// Use Google Time Distance Matrix API to calculate the estimated time to
 		// arrival of each mover.

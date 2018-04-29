@@ -31,8 +31,10 @@ func PostOnlineMover(
 		shouldGzip := utilities.ShouldGzipResponse(request)
 
 		onlineMover := models.OnlineMover{}
-		error := utilities.Decode(request.Body, &onlineMover)
-		if error != nil {
+		err := utilities.Decode(request.Body, &onlineMover)
+		if err != nil {
+			utilities.Print(err)
+
 			utilities.WriteErrorResponse(
 				responseWriter,
 				http.StatusBadRequest,
@@ -42,8 +44,10 @@ func PostOnlineMover(
 			return
 		}
 
-		error = validator.ValidateStruct(onlineMover)
-		if error != nil {
+		err = validator.ValidateStruct(onlineMover)
+		if err != nil {
+			utilities.Print(err)
+
 			utilities.WriteErrorResponse(
 				responseWriter,
 				http.StatusUnprocessableEntity,
@@ -58,14 +62,17 @@ func PostOnlineMover(
 			context := appengine.NewContext(request)
 			kind := "OnlineMover"
 			utilities.PutToDatastore(context, kind, &onlineMover)
-		} else { // Is the online move available?
+		} else { // Is the online mover available?
 			key := "OnlineMovers"
-			redisClient.GeoAdd(
+			_, err := redisClient.GeoAdd(
 				key,
 				onlineMover.Mover,
 				onlineMover.Latitude,
 				onlineMover.Longitude,
 			)
+			if err != nil {
+				utilities.Panic(err)
+			}
 		}
 
 		utilities.WriteOKResponse(responseWriter, onlineMover, shouldGzip)

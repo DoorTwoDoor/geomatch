@@ -17,10 +17,10 @@ import (
 
 func main() {
 	validator := utilities.NewValidator()
-	// address := "35.184.145.206:6379"
-	// password := "nY7FX1pqggQL"
-	address := "localhost:6379"
-	password := ""
+	address := "35.184.145.206:6379"
+	password := "nY7FX1pqggQL"
+	// address := "localhost:6379"
+	// password := ""
 	redisClient := utilities.NewRedisClient(address, password)
 	router := NewRouter(validator, redisClient)
 	http.Handle("/", router)
